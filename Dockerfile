@@ -6,12 +6,29 @@ RUN \
   && apt-get autoremove && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN apt install cron
-RUN systemctl enable cron
+COPY couchbase_backup.sh /
 
-ENV PATH "/bin:/sbin:/usr/bin:/usr/sbin:/opt/couchbase/bin:/usr/local/bin/:/usr/local/sbin/"
+RUN apt-get update && apt-get -y install cron
 
-ENTRYPOINT ["/run.sh"]
-CMD ["cron", "0 1 * * *"]
+# Copy backup-cron file to the cron.d directory
+COPY backup-cron /etc/cron.d/backup-cron
+ 
+# Give execution rights on the cron job
+RUN chmod 0644 /etc/cron.d/backup-cron
 
-COPY run.sh /
+# Apply cron job
+RUN crontab /etc/cron.d/backup-cron
+ 
+# Create the log file to be able to run tail
+RUN touch /var/log/cron.log
+ 
+# Run the command on container startup
+CMD cron && tail -f /var/log/cron.log
+
+# RUN apt-get install cron
+# RUN systemctl enable cron
+
+# ENV PATH "/bin:/sbin:/usr/bin:/usr/sbin:/opt/couchbase/bin:/usr/local/bin/:/usr/local/sbin/"
+
+# ENTRYPOINT ["/run.sh"]
+# CMD ["cron", "0 1 * * *"]

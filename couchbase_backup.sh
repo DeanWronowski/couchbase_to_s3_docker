@@ -67,17 +67,14 @@ do_restore () {
   restore_backup
 }
 
-cron () {
-  echo "Starting backup cron job with frequency '$1'"
-  echo "$1 $0 backup" > /var/spool/cron/crontabs/root
-  crond -f
-}
+# cron () {
+#   echo "Starting backup cron job with frequency '$1'"
+#   echo "$1 /$0 backup" > /etc/crontab
+#   # crond -f
+# }
 
 # Handle command line arguments
 case "$1" in
-  "cron")
-    cron "$2"
-    ;;
   "backup")
     do_backup
     ;;
@@ -86,5 +83,5 @@ case "$1" in
     ;;
   *)
     echo "Invalid command '$@'"
-    echo "Usage: $0 {backup|restore|cron <pattern>}"
+    echo "Usage: $0 {backup|restore <pattern>}"
 esac
