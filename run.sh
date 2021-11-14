@@ -69,8 +69,8 @@ do_restore () {
 
 cron () {
   echo "Starting backup cron job with frequency '$1'"
-  echo "$1 $0 backup" > /var/spool/cron/crontabs/root
-  crond -f
+  echo "$1 /$0 backup" > /etc/crontab
+  # crond -f
 }
 
 # Handle command line arguments
