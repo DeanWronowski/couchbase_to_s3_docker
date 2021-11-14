@@ -1,40 +1,36 @@
 #!/bin/bash
 #
-# Backup script for pre 4.5 Couchbase
+# Backup script for 6 Couchbase
 #
 
 
 set -e
 
-: ${AWS_PROFILE:=testing}
-: ${AWS_REGION:=us-east-1}
-: ${S3_BUCKET:=example-backup}
+: ${AWS_ACCESS_KEY_ID:=""}
+: ${AWS_SECRET_ACCESS_KEY:=""}
+
+: ${AWS_DEFAULT_REGION:="us-east-2"}
+: ${S3_BUCKET:="example-backup"}
 
 : ${SERVER_IP:="127.0.0.1"}
 : ${SERVER_USER:="Administrator"}
 : ${SERVER_PASSWORD:="secret"}
 
-: ${BACKUP_PATH:=/data}
-: ${BACKUP_REPO:=example-repo}
-: ${RESTORE_BUCKETS:="default beer-sample"}
-
-# ========================================================================================
-# END of configuration
-# ========================================================================================
+: ${BACKUP_PATH:="/data"}
+: ${RESTORE_BUCKETS:="default"}
 
 SERVER_URI="http://${SERVER_IP}:8091"
 
+
 sync_s3_up () {
-  AWS_DEFAULT_PROFILE=${AWS_PROFILE} \
-                     aws --region=${AWS_REGION} \
+  aws --region=${AWS_DEFAULT_REGION} \
                      s3 sync  \
                      ${BACKUP_PATH} \
                      s3://${S3_BUCKET}/${BACKUP_PATH}
 }
 
 sync_s3_down () {
-  AWS_DEFAULT_PROFILE=${AWS_PROFILE} \
-                     aws --region=${AWS_REGION} \
+  aws --region=${AWS_DEFAULT_REGION} \
                      s3 sync \
                      s3://${S3_BUCKET}/${BACKUP_PATH} \
                      ${BACKUP_PATH}
@@ -71,27 +67,24 @@ do_restore () {
   restore_backup
 }
 
-main () {
-  case $1 in
-
-    backup)
-      echo "Starting Couchbase Server Backup "
-      do_backup
-      ;;
-
-    restore)
-      echo "Starting Couchbase Server restore "
-      do_restore
-      ;;
-
-    -h|--help|-\?)
-      echo "usage: $0 backup|restore"
-      exit 1
-      ;;
-
-    *)
-      exec "$@"
-  esac
+cron () {
+  echo "Starting backup cron job with frequency '$1'"
+  echo "$1 $0 backup" > /var/spool/cron/crontabs/root
+  crond -f
 }
 
-main $@
+# Handle command line arguments
+case "$1" in
+  "cron")
+    cron "$2"
+    ;;
+  "backup")
+    do_backup
+    ;;
+  "restore")
+    do_restore
+    ;;
+  *)
+    echo "Invalid command '$@'"
+    echo "Usage: $0 {backup|restore|cron <pattern>}"
+esac

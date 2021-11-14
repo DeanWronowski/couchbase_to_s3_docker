@@ -1,5 +1,4 @@
-FROM couchbase:community-4.0.0
-MAINTAINER dmytro.kovalov@gmail.com
+FROM couchbase:community-6.0.0
 
 RUN \
   apt-get update \
@@ -9,7 +8,7 @@ RUN \
 
 ENV PATH "/bin:/sbin:/usr/bin:/usr/sbin:/opt/couchbase/bin:/usr/local/bin/:/usr/local/sbin/"
 
-ENTRYPOINT ["/backup_couchbase.sh"]
-CMD ["backup"]
+ENTRYPOINT ["/run.sh"]
+CMD ["cron", "0 1 * * *"]
 
-COPY backup_couchbase.sh /
+COPY run.sh /
