@@ -6,6 +6,9 @@ RUN \
   && apt-get autoremove && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+RUN apt install cron
+RUN systemctl enable cron
+
 ENV PATH "/bin:/sbin:/usr/bin:/usr/sbin:/opt/couchbase/bin:/usr/local/bin/:/usr/local/sbin/"
 
 ENTRYPOINT ["/run.sh"]
