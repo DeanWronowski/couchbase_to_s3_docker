@@ -37,7 +37,7 @@ sync_s3_down () {
 }
 
 run_backup () {
-  cbbackup ${SERVER_URI} ${BACKUP_PATH} \
+  /opt/couchbase/bin/cbbackup ${SERVER_URI} ${BACKUP_PATH} \
            -u ${SERVER_USER} \
            -p ${SERVER_PASSWORD}
 }
@@ -46,7 +46,7 @@ restore_backup () {
   local bucket
   for bucket in ${RESTORE_BUCKETS}; do
     echo Restoring ${bucket} bucket
-    cbrestore ${BACKUP_PATH} couchbase://${SERVER_IP}:8091 \
+    /opt/couchbase/bin/cbrestore ${BACKUP_PATH} couchbase://${SERVER_IP}:8091 \
               --bucket-source=${bucket}
   done
 }
