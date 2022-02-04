@@ -17,28 +17,31 @@ ENV RESTORE_BUCKETS ''
 
 RUN \
   apt-get update \
-  && apt-get install -y python-pip && pip install awscli  \
+  && apt-get install -y awscli  \
   && apt-get autoremove && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN apt-get update && apt-get -y install cron
 
 # Copy backup-cron file to the cron.d directory
-#COPY backup-cron /etc/cron.d/backup-cron
+COPY backup-cron /etc/cron.d/backup-cron
  
 # Give execution rights on the cron job
-#RUN chmod 0644 /etc/cron.d/backup-cron
+RUN chmod 0644 /etc/cron.d/backup-cron
 
 # Apply cron job
-#RUN crontab /etc/cron.d/backup-cron
+RUN crontab /etc/cron.d/backup-cron
  
 # Create the log file to be able to run tail
-#RUN touch /var/log/cron.log
+RUN touch /var/log/cron.log
 
-#RUN echo "Running cron job"
+ADD /couchbase_backup.sh /couchbase_backup.sh
+
+# RUN printenv
+RUN touch /container.env
  
 # Run the command on container startup
-#CMD cron && tail -f /var/log/cron.log
+CMD env > /container.env && cron && tail -f /var/log/cron.log
 
 # RUN apt-get install cron
 # RUN systemctl enable cron
@@ -46,7 +49,7 @@ RUN apt-get update && apt-get -y install cron
 # ENTRYPOINT ["/run.sh"]
 # CMD ["cron", "0 1 * * *"]
 
-ADD run.sh run.sh
-ADD backup.sh backup.sh
+# ADD run.sh run.sh
+# ADD backup.sh backup.sh
 
-CMD ["sh", "run.sh"]
+# CMD ["sh", "run.sh"]

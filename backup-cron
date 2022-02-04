@@ -1,2 +1,4 @@
-0 1 * * * /bin/sh /couchbase_backup.sh backup >> /var/log/cron.log 2>&1
+SHELL=/bin/sh
+BASH_ENV=/container.env
+* * * * * /bin/sh /container.env; /couchbase_backup.sh backup >> /var/log/cron.log 2>&1
 # An empty line is required at the end of this file for a valid cron file.

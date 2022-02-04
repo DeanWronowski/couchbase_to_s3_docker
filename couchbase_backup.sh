@@ -3,7 +3,6 @@
 # Backup script for 6 Couchbase
 #
 
-
 set -e
 
 : ${AWS_ACCESS_KEY_ID:=""}
@@ -19,8 +18,8 @@ set -e
 : ${BACKUP_PATH:="/data"}
 : ${RESTORE_BUCKETS:="default"}
 
-SERVER_URI="http://${SERVER_IP}:8091"
-
+# SERVER_IP="http://${SERVER_IP}:8091"
+echo Server IP ${SERVER_IP}
 
 sync_s3_up () {
   aws --region=${AWS_DEFAULT_REGION} \
@@ -37,7 +36,7 @@ sync_s3_down () {
 }
 
 run_backup () {
-  /opt/couchbase/bin/cbbackup ${SERVER_URI} ${BACKUP_PATH} \
+  /opt/couchbase/bin/cbbackup couchbase://${SERVER_IP}:8091 ${BACKUP_PATH} \
            -u ${SERVER_USER} \
            -p ${SERVER_PASSWORD}
 }
