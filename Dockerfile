@@ -2,6 +2,19 @@ FROM couchbase:community-6.0.0
 
 ENV PATH "/bin:/sbin:/usr/bin:/usr/sbin:/opt/couchbase/bin:/usr/local/bin/:/usr/local/sbin/"
 
+ENV AWS_ACCESS_KEY_ID ''
+ENV AWS_SECRET_ACCESS_KEY ''
+
+ENV AWS_DEFAULT_REGION ''
+ENV S3_BUCKET ''
+
+ENV SERVER_IP ''
+ENV SERVER_USER ''
+ENV SERVER_PASSWORD ''
+
+ENV BACKUP_PATH ''
+ENV RESTORE_BUCKETS ''
+
 RUN \
   apt-get update \
   && apt-get install -y python-pip && pip install awscli  \
