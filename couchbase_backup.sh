@@ -19,7 +19,7 @@ set -e
 : ${RESTORE_BUCKETS:="default"}
 
 # SERVER_IP="http://${SERVER_IP}:8091"
-echo Server IP ${SERVER_IP}
+# echo Server IP ${SERVER_IP}
 
 sync_s3_up () {
   aws --region=${AWS_DEFAULT_REGION} \
@@ -44,7 +44,7 @@ run_backup () {
 restore_backup () {
   local bucket
   for bucket in ${RESTORE_BUCKETS}; do
-    echo Restoring ${bucket} bucket
+    # echo Restoring ${bucket} bucket
     /opt/couchbase/bin/cbrestore ${BACKUP_PATH} couchbase://${SERVER_IP}:8091 \
               --bucket-source=${bucket}
   done
@@ -52,6 +52,7 @@ restore_backup () {
 
 
 configure () {
+  rm -rf ${BACKUP_PATH}
   mkdir -p ${BACKUP_PATH}
 }
 
