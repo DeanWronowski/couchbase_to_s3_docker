@@ -46,7 +46,9 @@ restore_backup () {
   for bucket in ${RESTORE_BUCKETS}; do
     # echo Restoring ${bucket} bucket
     /opt/couchbase/bin/cbrestore ${BACKUP_PATH} couchbase://${SERVER_IP}:8091 \
-              --bucket-source=${bucket}
+              --bucket-source=${bucket} \
+              -u ${SERVER_USER} \
+              -p ${SERVER_PASSWORD}
   done
 }
 
